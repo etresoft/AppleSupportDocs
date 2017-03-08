@@ -63,15 +63,9 @@ server.get(
       function(err, row)
         {
         if(err)
-          {
-          console.log("Error: " + err);
           data.status = err;
-          }
         else
-          {
-          console.log(row.title + " => " + row.url);
           data.records.push(row);
-          }
         },
       function()
         {
@@ -97,15 +91,9 @@ server.get(
       function(err, row)
         {
         if(err)
-          {
-          console.log("Error: " + err);
           data.status = err;
-          }
         else
-          {
-          console.log(row.title + " => " + row.url);
           data.records.push(row);
-          }
         },
       function()
         {
@@ -131,16 +119,9 @@ server.get(
       function(err, row)
         {
         if(err)
-          {
-          console.log("Error: " + err);
           data.status = err;
-          }
         else
-          {
-          data.status = "test";
-          console.log(row.category);
           data.records.push(row);
-          }
         },
       function()
         {
