@@ -58,23 +58,27 @@ server.get(
       };
     
     db.each(
-      "SELECT title, url from documents WHERE title like '%$1%' order by title",    
-      request.params.text, 
+      "SELECT title, url from documents WHERE title like $1 order by title",    
+      '%' + request.params.text + '%', 
       function(err, row)
-      {
-      if(err)
         {
-        console.log("Error: " + err);
-        data.status = err;
-        }
-      else
+        if(err)
+          {
+          console.log("Error: " + err);
+          data.status = err;
+          }
+        else
+          {
+          console.log(row.title + " => " + row.url);
+          data.records.push(row);
+          }
+        },
+      function()
         {
-        console.log(row.title + " => " + row.url);
-        data.records.push(row);
-        }
-      });
+        response.send(data);
 
-    return next();
+        return next();
+        });
     });
 
 server.get(
@@ -91,20 +95,24 @@ server.get(
       "SELECT title, url from documents WHERE category = $1 order by title",    
       request.params.category, 
       function(err, row)
-      {
-      if(err)
         {
-        console.log("Error: " + err);
-        data.status = err;
-        }
-      else
+        if(err)
+          {
+          console.log("Error: " + err);
+          data.status = err;
+          }
+        else
+          {
+          console.log(row.title + " => " + row.url);
+          data.records.push(row);
+          }
+        },
+      function()
         {
-        console.log(row.title + " => " + row.url);
-        data.records.push(row);
-        }
-      });
+        response.send(data);
 
-    return next();
+        return next();
+        });
     });
 
 server.get(
@@ -121,20 +129,25 @@ server.get(
       "SELECT distinct category from documents order by category",    
       request.params.text, 
       function(err, row)
-      {
-      if(err)
         {
-        console.log("Error: " + err);
-        data.status = err;
-        }
-      else
+        if(err)
+          {
+          console.log("Error: " + err);
+          data.status = err;
+          }
+        else
+          {
+          data.status = "test";
+          console.log(row.category);
+          data.records.push(row);
+          }
+        },
+      function()
         {
-        console.log(row.title + " => " + row.url);
-        data.records.push(row);
-        }
-      });
+        response.send(data);
 
-    return next();
+        return next();
+        });
     });
 
 server.listen(
