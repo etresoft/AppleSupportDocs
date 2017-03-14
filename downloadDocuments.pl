@@ -6,11 +6,15 @@ open(OUT, ">>output.xml");
 
 print OUT "<articles>\n";
 
-# Adjust this value to locate all likely articles.
-getpages(131249, 300000);
+# Pull all known ranges of documents.
+getpages('sp', 1, 1000);
+#getpages('dl', 1, 2000);
+#getpages('PH', 2000, 27000);
+#getpages('HT', 200000, 210000);
 
 sub getpages
   {
+  my $code = shift;
   my $min = shift;
   my $max = shift;
   
@@ -21,25 +25,26 @@ sub getpages
       
   my $mid = $min + int(($max - $min)/2);
 
-  my $found_mid = getpage($mid);
+  my $found_mid = getpage($code, $mid);
 
   if($found_mid)
     {
-    getfoundpagesdown($min, $mid - 1);
-    getfoundpagesup($mid + 1, $max);
+    getfoundpagesdown($code, $min, $mid - 1);
+    getfoundpagesup($code, $mid + 1, $max);
     }
   else
     {
     return
-      if $diff < 1000;
+      if $diff < ($diff / 100);
       
-    getpages($min, $mid - 1);
-    getpages($mid + 1, $max);
+    getpages($code, $min, $mid - 1);
+    getpages($code, $mid + 1, $max);
     }
   }
 
 sub getfoundpagesup
   {
+  my $code = shift;
   my $min = shift;
   my $max = shift;
   
@@ -48,15 +53,16 @@ sub getfoundpagesup
   for(;$current < $max; ++$current)
     {
     last 
-      if not getpage($current);
+      if not getpage($code, $current);
     }
     
-  getpages($current + 1, $max)
+  getpages($code, $current + 1, $max)
     if $current < $max;
   }
 
 sub getfoundpagesdown
   {
+  my $code = shift;
   my $min = shift;
   my $max = shift;
   
@@ -65,34 +71,28 @@ sub getfoundpagesdown
   for(;$current >= $min; --$current)
     {
     last 
-      if not getpage($current);
+      if not getpage($code, $current);
     }
     
-  getpages($min, $current)
+  getpages($code, $min, $current)
     if $current > $min;
   }
 
 sub getpage
   {
+  my $code = shift;
   my $id = shift;
 
-  my $page = '';
+  my $page = $code . $id;
 
   my $url = '';
   
-  if($id > 200000)
+  if($code eq 'HT')
     {
-    $page = 'HT' . $id;
     $url = 'https://support.apple.com/en-us/' . $page;
-    }
-  elsif($id < 2200)
-    {
-    $page = 'dl' . $id;
-    $url = 'https://support.apple.com/kb/' . $page . '?locale=en_US';
     }
   else
     {
-    $page = 'PH' . $id;
     $url = 'https://support.apple.com/kb/' . $page . '?locale=en_US';
     }
   
